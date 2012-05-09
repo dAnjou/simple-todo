@@ -1,0 +1,13 @@
+.container {
+    margin-top: 12px;
+}
+
+.alert-box a.delete {
+    color: #000000;
+    font-size: 18px;
+    opacity: 0.2;
+    padding: 4px;
+    position: absolute;
+    right: 4px;
+    top: 0;
+}
