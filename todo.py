@@ -1,16 +1,23 @@
-from bottle import route, run, template, redirect, debug, static_file, request
-import peewee
+from bottle import route, run, template, redirect, debug, static_file, request, abort
 
-db = peewee.SqliteDatabase('database.db')
+from couchdbkit import Server, Document, StringProperty, ListProperty
+from couchdbkit.designer import push
 
-class Todo(peewee.Model):
-    todo = peewee.TextField()
-    priority = peewee.CharField()
+couch = Server()
+db = couch.get_or_create_db('simple-todo')
 
-    class Meta:
-        database = db
+push('db/todolist', db)
+push('db/todo', db)
 
-db.connect()
+class TodoList(Document):
+    todos = ListProperty()
+
+class Todo(Document):
+    title = StringProperty()
+    priority = StringProperty()
+
+TodoList.set_db(db)
+Todo.set_db(db)
 
 @route('/static/<filepath:path>')
 def server_static(filepath):
@@ -18,25 +25,36 @@ def server_static(filepath):
 
 @route('/')
 def index():
-    return template('index', todos=Todo.select())
+    #return template('index', todos=Todo.select())
+    l = TodoList.view('todolist/all').first()
+    for x in dir(l):
+        print type(l[str(x)]), str(x)
+    return "lol"
 
 @route('/l/<list_id>')
 def list(list_id):
-    pass
+    todolist = TodoList.load(db, list_id)
+    if not todolist:
+        todolist = TodoList()
+        todolist.store(db)
+    return todolist.todos
 
-@route('/add', method='POST')
-def add():
-    todo = request.forms.todo
+@route('/l/<list_id>/add', method='POST')
+def add(list_id):
+    todolist = TodoList.load(db, list_id)
+    if not todolist:
+        abort(404)
+    title = request.forms.title
     priority = request.forms.priority
-    if todo and not todo.strip() == "":
-        t = Todo()
-        t.todo = todo
+    if title and not title.strip() == "":
+        todo = Todo(title=title)
         if priority:
-            t.priority = priority
-        t.save()
-    redirect('/')
+            todo.priority = priority
+        todo.store(db)
+        todolist.todos.append(todo.id)
+    redirect('/l/%s' % todolist.id)
 
-@route('/delete', method='POST')
+@route('/l/<list_id>/delete', method='POST')
 def delete():
     todo_id = request.forms.todo_id
     if todo_id.startswith('todo-'):

@@ -18,7 +18,7 @@
                     <form class="nice" method="post" name="add" id="add" action="/add">
                         <div class="input row">
                             <div class="eleven columns">
-                                <input class="expand input-text" type="text" name="todo" id="todo" placeholder="TODO"/>
+                                <input class="expand input-text" type="text" name="title" id="todo" placeholder="TODO"/>
                             </div>
                             <div class="no-margin columns">
                                 <a href="#" id="settings" class="white small radius button"><img src="/static/glyphicons/png/glyphicons_280_settings.png"></a>
@@ -53,7 +53,7 @@
                                     %if t.priority == 'now':
                                         <span class="black radius label">now</span>
                                     %end
-                                    {{ t.todo }}
+                                    {{ t.title }}
                                     <a href="#" class="delete" id="todo-{{ t.id }}">&times;</a>
                                 </div>
                             </li>
