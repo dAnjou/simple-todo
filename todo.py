@@ -5,6 +5,7 @@ db = peewee.SqliteDatabase('database.db')
 
 class Todo(peewee.Model):
     todo = peewee.TextField()
+    priority = peewee.CharField()
 
     class Meta:
         database = db
@@ -19,11 +20,20 @@ def server_static(filepath):
 def index():
     return template('index', todos=Todo.select())
 
+@route('/l/<list_id>')
+def list(list_id):
+    pass
+
 @route('/add', method='POST')
 def add():
     todo = request.forms.todo
+    priority = request.forms.priority
     if todo and not todo.strip() == "":
-        Todo.create(todo=todo)
+        t = Todo()
+        t.todo = todo
+        if priority:
+            t.priority = priority
+        t.save()
     redirect('/')
 
 @route('/delete', method='POST')

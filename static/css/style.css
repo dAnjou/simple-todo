@@ -11,3 +11,62 @@
     right: 4px;
     top: 0;
 }
+
+form.nice input.input-text {
+    font-size: 16px;
+    margin: 0;
+    height: 32px;
+}
+
+form.nice a.small.button {
+    padding: 8px;
+}
+
+form.nice a img {
+    height: 15px;
+}
+
+form.nice div.priority.row {
+    margin-top: 10px;
+    display: none;
+}
+
+form.nice label {
+    margin: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+}
+
+form.nice label.blue, form.nice span.blue {
+    border: 1px solid #00A6FC;
+}
+
+form.nice label.red, form.nice span.red {
+    border: 1px solid #E91C21;
+}
+
+form.nice label.black, form.nice span.black {
+    border: 1px solid #141414;
+}
+
+form.nice label span {
+    display: block;
+    bottom: 0;
+    margin: 0;
+}
+
+form.nice label input {
+    position: absolute;
+    visibility: hidden;
+}
+
+form.nice input:checked + span {
+    border: 1px solid white;
+}
+
+.no-margin.columns {
+    margin: 0;
+}
