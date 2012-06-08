@@ -1,5 +1,7 @@
 # simple-todo
 
+![screenshot](https://github.com/dAnjou/simple-todo/raw/master/screenshot.png)
+
 ## Install (Ubuntu 11.10 or higher)
 
 Install `couchdb`, `python-couchdbkit` and `python-bottle`.
