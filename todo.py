@@ -1,6 +1,6 @@
 from bottle import route, run, template, redirect, debug, static_file, request, abort
 
-from couchdbkit import Server, Document, StringProperty, ListProperty
+from couchdbkit import Server, Document, StringProperty
 from couchdbkit.designer import push
 
 couch = Server()
@@ -20,7 +20,7 @@ class Todo(Document):
 TodoList.set_db(db)
 Todo.set_db(db)
 
-@route('/static/<filepath:path>')
+@route('/static/:filepath')
 def server_static(filepath):
     return static_file(filepath, root='./static')
 
@@ -35,8 +35,9 @@ def todolists():
     lists = TodoList.view('todolist/all')
     return template('list', lists=lists)
 
-@route('/<list_id>/')
+@route('/:list_id/')
 def todolist(list_id):
+    print list_id
     todolist = TodoList.get_or_create(list_id)
     all_todos = Todo.view('todo/all')
     todos = []
@@ -45,7 +46,7 @@ def todolist(list_id):
             todos.append(todo)
     return template('index', todos=todos)
 
-@route('/<list_id>/add', method='POST')
+@route('/:list_id/add', method='POST')
 def add(list_id):
     try:
         todolist = TodoList.get(list_id)
