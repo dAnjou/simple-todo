@@ -15,7 +15,7 @@
         <div class="container">
             <div class="row">
                 <div class="six columns centered">
-                    <form class="nice" method="post" name="add" id="add" action="/add">
+                    <form class="nice" method="post" name="add" id="add" action="add">
                         <div class="input row">
                             <div class="eleven columns">
                                 <input class="expand input-text" type="text" name="title" id="todo" placeholder="TODO"/>
@@ -54,7 +54,7 @@
                                         <span class="black radius label">now</span>
                                     %end
                                     {{ t.title }}
-                                    <a href="#" class="delete" id="todo-{{ t.id }}">&times;</a>
+                                    <a href="#" class="delete" id="todo-{{ t['_id'] }}">&times;</a>
                                 </div>
                             </li>
                         %end
@@ -68,15 +68,15 @@
         <script>
         $(document).ready(function(){
             $("#todo").focus();  
-            $('a.delete').click(function(){
+            $("a.delete").click(function(){
                 var $this = $(this);
-                $.post('/delete', { todo_id: $this.attr('id') }, function(data) {
+                $.post("/t/delete", { todo_id: $this.attr("id") }, function(data) {
                     $this.parent().fadeOut();
                 })
                 .error(function() { alert("Shit, something failed!"); });
             });
-            $('a#settings').click(function(){
-                $('div.priority.row').toggle();
+            $("a#settings").click(function(){
+                $("div.priority.row").toggle();
             })
         });
         </script>

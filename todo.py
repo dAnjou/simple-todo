@@ -10,11 +10,12 @@ push('db/todolist', db)
 push('db/todo', db)
 
 class TodoList(Document):
-    todos = ListProperty()
+    pass
 
 class Todo(Document):
     title = StringProperty()
     priority = StringProperty()
+    todolist = StringProperty()
 
 TodoList.set_db(db)
 Todo.set_db(db)
@@ -25,24 +26,30 @@ def server_static(filepath):
 
 @route('/')
 def index():
-    #return template('index', todos=Todo.select())
-    l = TodoList.view('todolist/all').first()
-    for x in dir(l):
-        print type(l[str(x)]), str(x)
-    return "lol"
+    todolist = TodoList()
+    todolist.save()
+    redirect('/%s/' % todolist['_id'])
 
-@route('/l/<list_id>')
-def list(list_id):
-    todolist = TodoList.load(db, list_id)
-    if not todolist:
-        todolist = TodoList()
-        todolist.store(db)
-    return todolist.todos
+@route('/l/')
+def todolists():
+    lists = TodoList.view('todolist/all')
+    return template('list', lists=lists)
 
-@route('/l/<list_id>/add', method='POST')
+@route('/<list_id>/')
+def todolist(list_id):
+    todolist = TodoList.get_or_create(list_id)
+    all_todos = Todo.view('todo/all')
+    todos = []
+    for todo in all_todos:
+        if todo.todolist == todolist['_id']:
+            todos.append(todo)
+    return template('index', todos=todos)
+
+@route('/<list_id>/add', method='POST')
 def add(list_id):
-    todolist = TodoList.load(db, list_id)
-    if not todolist:
+    try:
+        todolist = TodoList.get(list_id)
+    except:
         abort(404)
     title = request.forms.title
     priority = request.forms.priority
@@ -50,16 +57,16 @@ def add(list_id):
         todo = Todo(title=title)
         if priority:
             todo.priority = priority
-        todo.store(db)
-        todolist.todos.append(todo.id)
-    redirect('/l/%s' % todolist.id)
+        todo.todolist = list_id
+        todo.save()
+    redirect('/%s/' % list_id)
 
-@route('/l/<list_id>/delete', method='POST')
+@route('/t/delete', method='POST')
 def delete():
     todo_id = request.forms.todo_id
     if todo_id.startswith('todo-'):
-        t = Todo.get(id=int(todo_id[5:]))
-        t.delete_instance()
+        t = Todo.get(todo_id[5:])
+        t.delete()
     return "success"
 
 if __name__ == '__main__':
