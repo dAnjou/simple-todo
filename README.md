@@ -18,6 +18,10 @@ Run `python todo.py`.
 
 [http://localhost:8080/](http://localhost:8080/)
 
+#### Create named todo list
+
+[http://localhost:8080/shopping/](http://localhost:8080/shopping/)
+
 #### See all todo lists
 
 [http://localhost:8080/l/](http://localhost:8080/l/)

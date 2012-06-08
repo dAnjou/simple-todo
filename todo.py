@@ -37,7 +37,6 @@ def todolists():
 
 @route('/:list_id/')
 def todolist(list_id):
-    print list_id
     todolist = TodoList.get_or_create(list_id)
     all_todos = Todo.view('todo/all')
     todos = []
@@ -52,8 +51,8 @@ def add(list_id):
         todolist = TodoList.get(list_id)
     except:
         abort(404)
-    title = request.forms.title
-    priority = request.forms.priority
+    title = request.forms.get('title')
+    priority = request.forms.get('priority')
     if title and not title.strip() == "":
         todo = Todo(title=title)
         if priority:
@@ -64,7 +63,7 @@ def add(list_id):
 
 @route('/t/delete', method='POST')
 def delete():
-    todo_id = request.forms.todo_id
+    todo_id = request.forms.get('todo_id')
     if todo_id.startswith('todo-'):
         t = Todo.get(todo_id[5:])
         t.delete()
