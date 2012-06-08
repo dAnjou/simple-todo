@@ -20,7 +20,7 @@ class Todo(Document):
 TodoList.set_db(db)
 Todo.set_db(db)
 
-@route('/static/:filepath')
+@route('/static/:filepath#.*#')
 def server_static(filepath):
     return static_file(filepath, root='./static')
 
