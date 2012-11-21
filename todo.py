@@ -70,5 +70,14 @@ def delete():
     return "success"
 
 if __name__ == '__main__':
-    debug(True)
-    run(host='0.0.0.0', port=8080, reloader=True)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--server", default='wsgiref', choices=['wsgiref', 'flup'])
+    parser.add_argument("-d", "--debug", action="store_true")
+    parser.add_argument("-r", "--reloader", action="store_true")
+    args = parser.parse_args()
+    debug(args.debug)
+    if args.server == 'wsgiref':
+        run(reloader=args.reloader)
+    if args.server == 'flup':
+        run(server='flup', bindAddress='/tmp/simple-todo.sock', reloader=args.reloader)
