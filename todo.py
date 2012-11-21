@@ -3,6 +3,14 @@ from bottle import route, run, template, redirect, debug, static_file, request, 
 from couchdbkit import Server, Document, StringProperty
 from couchdbkit.designer import push
 
+try:
+    import simplejson as json
+except ImportError:
+    import json
+import mimerender
+
+mimerender = mimerender.BottleMimeRender()
+
 couch = Server()
 db = couch.get_or_create_db('simple-todo')
 
@@ -30,20 +38,40 @@ def index():
     todolist.save()
     redirect('/%s/' % todolist['_id'])
 
+render_json = lambda **x: json.dumps({"lists": [l['_id'] for l in x["lists"]]})
+render_html = lambda **x: template('list', lists=x["lists"])
+render_txt = lambda **x: "\n".join([l['_id'] for l in x["lists"]])
+
 @route('/l/')
+@mimerender(
+    default = 'html',
+    html = render_html,
+    json = render_json,
+    txt  = render_txt
+)
 def todolists():
     lists = TodoList.view('todolist/all')
-    return template('list', lists=lists)
+    return {"lists": lists}
+
+render_json = lambda **x: json.dumps(x)
+render_html = lambda **x: template('index', todos=x["todos"])
+render_txt = lambda **x: "\n".join([y["title"] for y in x["todos"]])
 
 @route('/:list_id/')
+@mimerender(
+    default = 'html',
+    html = render_html,
+    json = render_json,
+    txt  = render_txt
+)
 def todolist(list_id):
     todolist = TodoList.get_or_create(list_id)
     all_todos = Todo.view('todo/all')
     todos = []
     for todo in all_todos:
         if todo.todolist == todolist['_id']:
-            todos.append(todo)
-    return template('index', todos=todos)
+            todos.append(dict(todo, id=todo['_id']))
+    return {"todos": todos}
 
 @route('/:list_id/add', method='POST')
 def add(list_id):

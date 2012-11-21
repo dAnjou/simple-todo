@@ -44,17 +44,17 @@
                         %for t in todos:
                             <li>
                                 <div class="alert-box">
-                                    %if t.priority == 'lazy':
+                                    %if t["priority"] == 'lazy':
                                         <span class="blue radius label">lazy</span>
                                     %end
-                                    %if t.priority == 'soon':
+                                    %if t["priority"] == 'soon':
                                         <span class="red radius label">soon</span>
                                     %end
-                                    %if t.priority == 'now':
+                                    %if t["priority"] == 'now':
                                         <span class="black radius label">now</span>
                                     %end
-                                    {{ t.title }}
-                                    <a href="#" class="delete" id="todo-{{ t['_id'] }}">&times;</a>
+                                    {{ t["title"] }}
+                                    <a href="#" class="delete" id="todo-{{ t['id'] }}">&times;</a>
                                 </div>
                             </li>
                         %end
